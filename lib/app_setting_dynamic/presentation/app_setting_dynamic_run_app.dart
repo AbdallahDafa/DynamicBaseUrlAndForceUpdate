@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dynamic_chnage_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
-import 'package:dynamic_chnage_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_installer.dart';
-import 'package:dynamic_chnage_base_url_and_force_update/app_setting_dynamic/logic/intent_force_update.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_installer.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/intent_force_update.dart';
 import 'package:flutter/material.dart';
 
 typedef OnNeedUpdateDioHelperBaseUrl = Function();

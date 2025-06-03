@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:dynamic_chnage_base_url_and_force_update/dynamic_chnage_base_url_and_force_update.dart';
+import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
 
 void main() {
 
@@ -37,7 +37,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _dynamicChnageBaseUrlAndForceUpdatePlugin = DynamicChnageBaseUrlAndForceUpdate();
+  final _dynamicChnageBaseUrlAndForceUpdatePlugin = DynamicBaseUrlAndForceUpdate();
 
   @override
   void initState() {

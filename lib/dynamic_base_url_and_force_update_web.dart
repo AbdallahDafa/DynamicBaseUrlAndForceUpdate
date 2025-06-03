@@ -6,15 +6,15 @@
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:web/web.dart' as web;
 
-import 'dynamic_chnage_base_url_and_force_update_platform_interface.dart';
+import 'dynamic_base_url_and_force_update_platform_interface.dart';
 
 /// A web implementation of the DynamicChnageBaseUrlAndForceUpdatePlatform of the DynamicChnageBaseUrlAndForceUpdate plugin.
-class DynamicChnageBaseUrlAndForceUpdateWeb extends DynamicChnageBaseUrlAndForceUpdatePlatform {
+class DynamicBaseUrlAndForceUpdateWeb extends DynamicBaseUrlAndForceUpdatePlatform {
   /// Constructs a DynamicChnageBaseUrlAndForceUpdateWeb
-  DynamicChnageBaseUrlAndForceUpdateWeb();
+  DynamicBaseUrlAndForceUpdateWeb();
 
   static void registerWith(Registrar registrar) {
-    DynamicChnageBaseUrlAndForceUpdatePlatform.instance = DynamicChnageBaseUrlAndForceUpdateWeb();
+    DynamicBaseUrlAndForceUpdatePlatform.instance = DynamicBaseUrlAndForceUpdateWeb();
   }
 
   /// Returns a [String] containing the version of the platform.

@@ -2,7 +2,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dynamic_chnage_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
 
 
 
