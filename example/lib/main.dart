@@ -1,3 +1,5 @@
+import 'package:dynamic_chnage_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_installer.dart';
+import 'package:dynamic_chnage_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_dynamic_run_app.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -5,8 +7,26 @@ import 'package:flutter/services.dart';
 import 'package:dynamic_chnage_base_url_and_force_update/dynamic_chnage_base_url_and_force_update.dart';
 
 void main() {
-  runApp(const MyApp());
+
+  AppSettingDynamicInstaller.setConfigBaseUrls(
+    domainDefault: 'https://test4.maqsafy.com',
+    firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app",
+  );
+
+  runApp( AppSettingDynamicRunApp(
+    currentVersionValidateForForceUpdate: 115,
+    linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id1493287507",
+    linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.maqsafy",
+    onNeedUpdateDioHelperBaseUrl: (){
+      /// (Optional In Case Use "DI" )update "di" dependant inject of baseurl
+     // di.reRegisterDependentInjectionForDioHelper();
+    },
+    builder: (context)   {
+      return MyApp();
+    },
+  ));
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -50,6 +70,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),

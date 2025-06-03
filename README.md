@@ -8,22 +8,40 @@
 
 -----
 
+## Screenshots :
+
+### Force Update
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/forceupdate_screen.png" alt="Force Update Google Play or Apple Store" width="200" />
+
+### Postman Get Data
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_get_app_setting.png" alt="postman_get_app_setting" width="600" />
+
+-----
+
+-----
+
 # Guide For Backend Developer:
 
 ## 1- create account email from console of firebase project
 
-* visit link:
+* visit link Console, then enable Authentication Type Email :
   https://console.firebase.google.com/project/maqsafy-egypt/authentication/users
+
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_enable_auth_by_email.png" alt="firebase_enable_auth_by_email" width="600" />
+
 
 * create account
 ```
 - Email   :
-developer.firebase@dafagate.com
+developer.firebase@yourdomain.com
 
 - Password   account:" 
 12345678
 
 ```
+
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_create_user_email.png" alt="firebase_create_user_email" width="600" />
+
 
 ### Notice: This password for testing mode, don't forget to change it in live
 
@@ -42,6 +60,7 @@ developer.firebase@dafagate.com
 }
 
 ```
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_create_rules.png" alt="firebase_create_rules" width="600" />
 
 
 ## 3- create realtime database data :
@@ -55,6 +74,9 @@ developer.firebase@dafagate.com
 }
 ```
 
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_create_data.png" alt="firebase_create_data" width="600" />
+
+
 
 ## 4- To update from Postman RESTFul api
 
@@ -64,21 +86,26 @@ developer.firebase@dafagate.com
 
 * To Get Url with project id :
   . Just visit console firebase  >> realtime database >> will found in database url
-  .  exmaple like to:    https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
+  .  example like to:    https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
 
 
 * Header add : "Content-Type" value "application/json"
+  
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_update_header.png" alt="postman_update_header" width="600" />
+ 
 
+#### How to Get URL Of Your ProjectId Of firebase:
 
-#### How to Get URL with ProjectId firebase:
-
-* Firebasee Console >> Realtime Database >> Tab "Data" >> found url here
+* Firebase Console >> Realtime Database >> Click on Tab "Data" >> you will found url here
 
 * formula:
   https://<project-id>.firebaseio.com/
 
 * example
   https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
+
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_create_data.png" alt="firebase_create_data" width="600" />
+
 
 ### How to Get dynamic app setting  :
 
@@ -90,12 +117,19 @@ developer.firebase@dafagate.com
 * full with .json
   GET https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting.json
 
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_get_app_setting.png" alt="postman_get_app_setting" width="600" />
 
-### How to get Access Token  (to be have access to update setting ) :
+
+### How to get Access Token Firebase :
+*  Access Token Firebase : Needed to be allowed in edit information of baseUrl or ForceUpdate Version or another.
+
 1. Get Web API KEY:
 * Firebase project's Web API key (from Firebase Console → Project Settings → General → Web API Key
-* Register new <> web application, will show vlaue here :
+* Register new <> web application, will show value here :
   const firebaseConfig =  {  apiKey: "AIza************************",  ..... }
+
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_web_config.png" alt="firebase_web_config" width="600" />
+
 
 2. in postman http request : POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=YOUR_WEB_API_
 * payload :
@@ -106,6 +140,9 @@ developer.firebase@dafagate.com
   "returnSecureToken": true
 }
 ```
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_get_access_token.png" alt="postman_get_access_token" width="600" />
+
+
 
 * postman save variable >> script tab >> post response (copy/past):
 ```
@@ -115,7 +152,9 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
  
 ```
 
-* the above code show the "idToken" will be saved at variable named "firebase_access_token_admin"
+(   the above code show the "idToken" will be saved at variable named "firebase_access_token_admin" )
+
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_get_access_set_variable.png" alt="postman_get_access_set_variable" width="600" />
 
 
 ### How to update min version ( force update feature ) :
@@ -133,6 +172,9 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
 }
 ```
 
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_update_force_update.png" alt="postman_update_force_update" width="600" />
+
+
 ### How to update base url dynamic :
 
 - endpoint
@@ -146,7 +188,9 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
     "base_url_dynamic":  "https://new.com"
 }
 ```
- 
+
+<img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_update_baseurl_dynamic.png" alt="postman_update_baseurl_dynamic" width="600" />
+
 ------
 
 ------
