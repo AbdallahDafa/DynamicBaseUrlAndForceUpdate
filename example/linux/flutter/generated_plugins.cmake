@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  dynamic_chnage_base_url_and_force_update
+  dynamic_base_url_and_force_update
   url_launcher_linux
 )
 

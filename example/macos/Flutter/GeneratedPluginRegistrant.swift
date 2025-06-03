@@ -5,7 +5,7 @@
 import FlutterMacOS
 import Foundation
 
-import dynamic_chnage_base_url_and_force_update
+import dynamic_base_url_and_force_update
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

@@ -65,7 +65,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  dynamic_chnage_base_url_and_force_update:
+  dynamic_base_url_and_force_update:
     dependency: "direct main"
     description:
       path: ".."
