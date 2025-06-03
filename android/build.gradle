@@ -1,4 +1,4 @@
-group = "com.example.dynamic_chnage_base_url_and_force_update"
+group = "com.example.dynamic_base_url_and_force_update"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -27,7 +27,7 @@ apply plugin: "kotlin-android"
 
 android {
     if (project.android.hasProperty("namespace")) {
-        namespace = "com.example.dynamic_chnage_base_url_and_force_update"
+        namespace = "com.example.dynamic_base_url_and_force_update"
     }
 
     compileSdk = 34
