@@ -357,7 +357,7 @@ var baseUrl = AppSettingDynamicInstaller.getDomain();
       <img src="https://raw.githubusercontent.com/AbdallahDafa/hyper_pay_flutter_plugin/refs/heads/main/screenshot/company/logo_masarat.png"  width="80"/>
     </td>
     <td>
-      <h3>MASARAT                   <br/>
+      <h3>MASARAT                   .<br/>
       <a href="https://www.linkedin.com/company/dafa-sa/">Linkedin</a><br/>
       <a href="https://masaratech.com/">Website</a></h3>
     </td>
