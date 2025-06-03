@@ -167,7 +167,9 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
   https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
 
 
-### 2. Set method reRegister in "di"
+### 2. Set method reRegister in "di" ( Optional For DependentInjection  )
+
+( skip this step in case you not set "dio" at "di" )
 
 * At your code class "Di" DependentInjection, update "Dio Helper" class
 ```` 
@@ -182,7 +184,7 @@ Future reRegisterDependentInjectionForDioHelper() async {
   sl.registerLazySingleton<ApiUtil>(() => api);
 }
 ````
-( skip this step in case you not set "dio" at "di" )
+
 
 ### 3. in main method write :
 
@@ -197,7 +199,7 @@ Future reRegisterDependentInjectionForDioHelper() async {
   );
 
 ```
-(  skip this step in case you not set "dio" at "di")
+(  If app not have "DI" write before runApp() at any line)
 
 * wrap MyApp()  in case there, then update "di/dio helper"
 ```
@@ -206,7 +208,7 @@ Future reRegisterDependentInjectionForDioHelper() async {
       linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id1493287507",
       linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.maqsafy",
       onNeedUpdateDioHelperBaseUrl: (){
-        /// update "di" dependant inject of baseurl
+        /// (Optional In Case Use "DI" )update "di" dependant inject of baseurl
         di.reRegisterDependentInjectionForDioHelper();
       },
       builder: (context)   {
@@ -214,6 +216,7 @@ Future reRegisterDependentInjectionForDioHelper() async {
       },
   ));
 ```
+
 
 ### 4. In Video Splash Screen
 
