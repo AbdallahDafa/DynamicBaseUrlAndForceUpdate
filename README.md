@@ -1,14 +1,20 @@
 #  App Setting Dynamic Change "Domain" and "Force Update Dialog Popup"
 
-## Dynamic Change Base Url & Feature Force Update New Version From Google Play and Apple Store"
+-----
 
-## Guide For Backend & Mobile Developer :  Setup Dynamic Domain Link & Force Update Mini version
+-----
+
+## Features :
+
+### Dynamic Change Base Url & Feature Force Update New Version From Google Play and Apple Store"
+
+### Guide For Backend & Mobile Developer :  Setup Dynamic Domain Link & Force Update Mini version
 
 -----
 
 -----
 
-## Screenshots :
+## Screenshots Result :
 
 ### Force Update
 <img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/forceupdate_screen.png" alt="Force Update Google Play or Apple Store" width="200" />
@@ -22,8 +28,9 @@
 
 # Guide For Backend Developer:
 
-## 1- create account email from console of firebase project
+## 1- Config Firebase Authentication : 
 
+* create account email from console of firebase project
 * visit link Console, then enable Authentication Type Email :
   https://console.firebase.google.com/project/maqsafy-egypt/authentication/users
 
@@ -350,7 +357,7 @@ var baseUrl = AppSettingDynamicInstaller.getDomain();
       <img src="https://raw.githubusercontent.com/AbdallahDafa/hyper_pay_flutter_plugin/refs/heads/main/screenshot/company/logo_masarat.png"  width="80"/>
     </td>
     <td>
-      <h3>MASARAT<br/>
+      <h3>MASARAT                   <br/>
       <a href="https://www.linkedin.com/company/dafa-sa/">Linkedin</a><br/>
       <a href="https://masaratech.com/">Website</a></h3>
     </td>
