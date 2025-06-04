@@ -307,10 +307,10 @@ Future reRegisterDependentInjectionForDioHelper() async {
 * set the "isVideoSplashCompleted" to be true, when video controller say it's completed video showing
 ``` 
   listenerVideoCompleted() async {
-     
+      
       isVideoSplashCompleted = true;
 
-      if( AppSettingDynamicController.isCompleteDownloadData() ){
+      if( AppSettingDynamicInstaller.isCompleteDownloadData() ){
           navigateToHome();
       }
     }
