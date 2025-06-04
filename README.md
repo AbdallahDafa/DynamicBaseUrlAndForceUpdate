@@ -60,7 +60,7 @@ developer.firebase@yourdomain.com
   "rules": {
     "app_setting": {
       ".read": "true",
-      ".write": "auth != null && auth.token.email == 'developer.firebase@dafagate.com'",
+      ".write": "auth != null && auth.token.email == 'developer.firebase@yourdomain.com'",
       
     }
   }
@@ -142,7 +142,7 @@ developer.firebase@yourdomain.com
 * payload :
 ```
 {
-  "email": "developer.firebase@dafagate.com",
+  "email": "developer.firebase@yourdomain.com",
   "password": "12345678",
   "returnSecureToken": true
 }
@@ -326,11 +326,15 @@ Future reRegisterDependentInjectionForDioHelper() async {
 var baseUrl = AppSettingDynamicInstaller.getDomain(); 
 ```
 
-* how to set in class Endpoint url as constant 
+* How to get From Endpoint Variable
+#### => old way
 ```
 static String baseUrlv2 = '${AppSettingDynamicInstaller.getDomain()}/api/v2/';
 ```
-
+#### => New way get dynamic using method return "=>"
+```
+  static String baseUrlv2() =>  AppSettingDynamicInstaller.getDomain() + '/api/v2/';
+```
 
 ## Use at Any Framework : Like Native kotlin or swift :
 * How to Get dynamic app setting  Json Data :

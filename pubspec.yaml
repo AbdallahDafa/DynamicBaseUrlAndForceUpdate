@@ -1,6 +1,6 @@
 name: dynamic_base_url_and_force_update
 description: "Dynamic Change Base Url & Feature Force Update New Version From Google Play and Apple Store"
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate
 repository: https://github.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate
 
