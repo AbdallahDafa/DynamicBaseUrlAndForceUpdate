@@ -320,10 +320,17 @@ Future reRegisterDependentInjectionForDioHelper() async {
 * Notice : method    "navigateToHome();" make Navigate to screen after splash, example home screen
 
 ### 5- How To Get New BaseUrl Domain Dynamic
-* By Using Method
+
+* Get BaseUrl dynamic
 ```
 var baseUrl = AppSettingDynamicInstaller.getDomain(); 
 ```
+
+* how to set in class Endpoint url as constant 
+```
+static String baseUrlv2 = '${AppSettingDynamicInstaller.getDomain()}/api/v2/';
+```
+
 
 ## Use at Any Framework : Like Native kotlin or swift :
 * How to Get dynamic app setting  Json Data :
