@@ -335,6 +335,8 @@ static String baseUrlv2 = '${AppSettingDynamicInstaller.getDomain()}/api/v2/';
 ```
   static String baseUrlv2() =>  AppSettingDynamicInstaller.getDomain() + '/api/v2/';
 ```
+(Notice: need to remove "static" or change static filed to method function . 
+Due to static fields are initialized only once when the class is first loaded into memory. )
 
 ## Use at Any Framework : Like Native kotlin or swift :
 * How to Get dynamic app setting  Json Data :
