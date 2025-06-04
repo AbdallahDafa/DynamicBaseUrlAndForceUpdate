@@ -3,8 +3,6 @@
 class AppSettingDynamicResponse {
 
   String? baseUrlDynamic;
-  // String? linkUpdateApplestore;
-  // String? linkUpdateGoogleplay;
   int? minVersionAndroid;
   int? minVersionIos;
 
@@ -12,12 +10,14 @@ class AppSettingDynamicResponse {
 
   AppSettingDynamicResponse.fromJson(Map<String, dynamic> json) {
     baseUrlDynamic = json['base_url_dynamic'];
-    // linkUpdateApplestore = json['link_update_applestore'];
-    // linkUpdateGoogleplay = json['link_update_googleplay'];
     minVersionAndroid = json['min_version_android'];
     minVersionIos = json['min_version_ios'];
 
   }
 
+  @override
+  String toString() {
+    return 'AppSettingDynamicResponse{baseUrlDynamic: $baseUrlDynamic, minVersionAndroid: $minVersionAndroid, minVersionIos: $minVersionIos}';
+  }
 
 }
