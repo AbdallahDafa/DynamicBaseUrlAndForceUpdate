@@ -1,3 +1,7 @@
+## 1.0.6
+
+* make dependence 'web: any '
+* 
 ## 1.0.5
 
 * make working on website flutter
