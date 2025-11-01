@@ -77,7 +77,8 @@ developer.firebase@yourdomain.com
 {
     "base_url_dynamic": "http://new.com",
     "min_version_ios": 116,
-    "min_version_android": 116
+    "min_version_android": 116,
+    "min_version_web": 116
 }
 ```
 

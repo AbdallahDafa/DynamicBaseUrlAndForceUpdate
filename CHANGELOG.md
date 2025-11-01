@@ -1,7 +1,8 @@
-## 1.0.6
+## 1.0.7
 
+* add in realtime database key :       "min_version_web": 116 
 * make dependence 'web: any '
-* 
+
 ## 1.0.5
 
 * make working on website flutter

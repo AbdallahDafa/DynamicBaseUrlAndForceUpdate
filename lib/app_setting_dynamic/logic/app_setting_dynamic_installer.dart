@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
+import 'package:flutter/foundation.dart';
 
 
 
@@ -91,7 +92,11 @@ class AppSettingDynamicInstaller {
   /// in case not valid, means it's need to forceUpdate
   static bool isValidVersionMinAllowed( int currentVersion )  {
     //check mobile
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      var minAllowed =     AppSettingDynamicInstaller._response?.minVersionWeb??0;
+      if( minAllowed == currentVersion ) return true;
+      return  minAllowed <  currentVersion;
+    } else if   (Platform.isAndroid) {
       var minAllowed =     AppSettingDynamicInstaller._response?.minVersionAndroid??0;
       if( minAllowed == currentVersion ) return true;
       return  minAllowed <  currentVersion;
