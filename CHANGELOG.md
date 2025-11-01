@@ -1,3 +1,8 @@
+## 1.0.5
+
+* make working on website flutter
+* update dependence " web: 1.0.0"
+
 ## 1.0.4
 
 * Update Readme
