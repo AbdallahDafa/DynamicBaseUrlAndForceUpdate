@@ -5,9 +5,13 @@ import 'package:provider/provider.dart';
 
 typedef OnNeedUpdateDioHelperBaseUrl = Function();
 
-/// Provides [AppSettingDynamicNotifier] to the whole app
-/// (`context.read<AppSettingDynamicNotifier>()` works under [builder])
-/// and the force-update screen when the app version is too old.
+/// Provides [AppSettingDynamicNotifier] and the force-update settings to the
+/// whole app (`context.read<AppSettingDynamicNotifier>()` works under [builder]).
+///
+/// Nothing is downloaded here and nothing blocks the app start:
+/// the download starts only from screens: the splash screen (optional) and
+/// the home page with `AppSettingForceUpdateChecker` (required), which also
+/// checks force update.
 class AppSettingDynamicRunApp extends StatefulWidget {
 
   final int currentVersionValidateForForceUpdate;
@@ -25,31 +29,10 @@ class AppSettingDynamicRunApp extends StatefulWidget {
   final String? messageForceUpdate;
   final String? buttonForceUpdate;
 
-  /// false (default): no download here, call
-  /// `context.read<AppSettingDynamicNotifier>().download()` from your splash
-  /// screen (or let `AppSettingForceUpdateChecker` start it in the home page).
-  /// true: start downloading as soon as the app opens.
-  final bool downloadOnStart;
-
-  /// true (default): the whole app is replaced by the force-update screen
-  /// as soon as it is needed (even on the splash screen).
-  /// false: put `AppSettingForceUpdateChecker` inside your home page,
-  /// the check happens there and the splash screen is never blocked.
-  final bool checkForceUpdateOnRoot;
-
-  /// true (default): the last downloaded setting saved on the device is used
-  /// for the force-update check right away, even offline.
-  /// false: only a download of this session can force update, so an
-  /// offline-first app keeps working offline.
-  final bool forceUpdateFromCache;
-
 
   const AppSettingDynamicRunApp( {
     super.key,
     required this.builder,
-    this.downloadOnStart = false,
-    this.checkForceUpdateOnRoot = true,
-    this.forceUpdateFromCache = true,
 
     /// feature:  base url dynamic
     required  this.currentVersionValidateForForceUpdate,
@@ -86,12 +69,6 @@ class _AppSettingDynamicRunAppState extends State<AppSettingDynamicRunApp> {
     _forceUpdateConfig = _createForceUpdateConfig();
     _lastDomain = _notifier.domain;
     _notifier.addListener(_onAppSettingChanged);
-
-    if (widget.downloadOnStart) {
-      WidgetsBinding.instance.addPostFrameCallback( (t ) {
-        _notifier.download(); // background: never throws / hangs
-      });
-    }
   }
 
   @override
@@ -102,7 +79,7 @@ class _AppSettingDynamicRunAppState extends State<AppSettingDynamicRunApp> {
 
   @override
   void dispose() {
-    _notifier.removeListener(_onAppSettingChanged);
+    // _notifier.removeListener(_onAppSettingChanged);
     super.dispose();
   }
 
@@ -117,11 +94,9 @@ class _AppSettingDynamicRunAppState extends State<AppSettingDynamicRunApp> {
       title: widget.titleForceUpdate,
       message: widget.messageForceUpdate,
       button: widget.buttonForceUpdate,
-      fromCache: widget.forceUpdateFromCache,
     );
   }
 
-  /// side effect only, the ui (force update) is rebuilt by the Selector in build()
   /// the dio helper is re-created only when the base url really changed
   void _onAppSettingChanged() {
     final domain = _notifier.domain;
@@ -138,40 +113,9 @@ class _AppSettingDynamicRunAppState extends State<AppSettingDynamicRunApp> {
       value: _notifier,
       child: Provider<AppSettingForceUpdateConfig>.value(
         value: _forceUpdateConfig,
-        child: widget.checkForceUpdateOnRoot
-            ? Selector<AppSettingDynamicNotifier, bool>(
-                selector: (_, setting) => _forceUpdateConfig.isNeedForceUpdate(setting),
-                builder: (context, isNeedForceUpdate, _) {
-                  if( isNeedForceUpdate ) {
-                    // may come from the cache and the splash screen won't run:
-                    // refresh it here (closes this screen if no update needed)
-                    WidgetsBinding.instance.addPostFrameCallback( (t ) {
-                      _notifier.download(retryIfFailed: true);
-                    });
-                    return dialogForceUpdateFullScreenShape();
-                  }
-                  return widget.builder(context);
-                },
-              )
-            : Builder(builder: widget.builder),
+        child: Builder(builder: widget.builder),
       ),
     );
-  }
-
-
-
-  Widget dialogForceUpdateFullScreenShape( ) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      home:  Scaffold(
-      body: SizedBox.expand(
-        child: ColoredBox(
-          color:  const Color(0x99000000), //shadow
-          child: AppSettingForceUpdateDialog(config: _forceUpdateConfig),
-        ),
-      ),
-    ));
   }
 
 }

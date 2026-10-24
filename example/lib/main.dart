@@ -22,7 +22,6 @@ Future<void> main() async {
   // await di.init();
 
   runApp( AppSettingDynamicRunApp(
-    checkForceUpdateOnRoot: false, // checked inside HomePage by AppSettingForceUpdateChecker
     currentVersionValidateForForceUpdate: 115,
     linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id1493287507",
     linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.maqsafy",
@@ -50,8 +49,7 @@ class MyApp extends StatelessWidget {
 }
 
 
-/// Starts the download, never waits for it: same splash time with fast,
-/// slow or no internet.
+/// Never waits for the network: same splash time with fast, slow or no internet.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -66,7 +64,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    /// background download, DON'T await it
+    /// optional: start the download early, DON'T await it
+    /// (the home page shares the same request)
     context.read<AppSettingDynamicNotifier>().download();
 
     /// your splash animation / video time, nothing about the network
@@ -139,8 +138,9 @@ class _HomePageState extends State<HomePage> {
     /// rebuilds when the app setting finishes downloading
     final appSetting = context.watch<AppSettingDynamicNotifier>();
 
-    /// force update is checked here (cache first, then the download)
-    return AppSettingForceUpdateChecker(
+    /// required: downloads the app setting (or shares the splash download)
+    /// and checks force update here (cache first, then the download)
+    return AppSettingForceUpdateCheckerWidget(
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),

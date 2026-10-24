@@ -3,11 +3,12 @@ import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentati
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-/// Checks force update inside your home page, so the splash screen never
-/// waits for the network.
+/// Required in your home page: the home page is where the app setting is
+/// downloaded and force update is checked, so the splash screen never waits
+/// for the network.
 ///
-/// Use it with `AppSettingDynamicRunApp(checkForceUpdateOnRoot: false, ...)`,
-/// inside the home page (under your `MaterialApp`):
+/// Put it inside the home page (under your `MaterialApp`), under
+/// `AppSettingDynamicRunApp`:
 /// ```dart
 /// @override
 /// Widget build(BuildContext context) {
@@ -18,23 +19,24 @@ import 'package:provider/provider.dart';
 /// ```
 ///
 /// - checks right away with the cached setting (nothing to wait for)
-/// - starts the download if the splash screen didn't, or tries again when it
-///   failed (app opened offline), then checks again when it finishes
-/// - tries again a failed download when the app comes back to the foreground
+/// - starts the download in background when the home page opens (or shares the
+///   one the splash screen started), then checks again when it finishes
+/// - tries again a failed download (app opened offline) when the app comes
+///   back to the foreground
 /// - shows the force-update dialog above all pages (back button can't close
 ///   it), and closes it by itself when the new download says no update needed
-class AppSettingForceUpdateChecker extends StatefulWidget {
-  const AppSettingForceUpdateChecker({super.key, required this.child});
+class AppSettingForceUpdateCheckerWidget extends StatefulWidget {
+  const AppSettingForceUpdateCheckerWidget({super.key, required this.child});
 
   /// Your home page content.
   final Widget child;
 
   @override
-  State<AppSettingForceUpdateChecker> createState() =>
-      _AppSettingForceUpdateCheckerState();
+  State<AppSettingForceUpdateCheckerWidget> createState() =>
+      _AppSettingForceUpdateCheckerWidgetState();
 }
 
-class _AppSettingForceUpdateCheckerState extends State<AppSettingForceUpdateChecker>
+class _AppSettingForceUpdateCheckerWidgetState extends State<AppSettingForceUpdateCheckerWidget>
     with WidgetsBindingObserver {
   /// Shared by all checkers: the dialog is never shown twice.
   static Route<void>? _dialogRoute;

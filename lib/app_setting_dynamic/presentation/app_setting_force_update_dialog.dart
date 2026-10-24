@@ -14,7 +14,6 @@ class AppSettingForceUpdateConfig {
     this.title,
     this.message,
     this.button,
-    this.fromCache = true,
   });
 
   /// Version of this build, compared with the min version from firebase.
@@ -25,11 +24,9 @@ class AppSettingForceUpdateConfig {
   final String? message;
   final String? button;
 
-  /// See `AppSettingDynamicRunApp.forceUpdateFromCache`.
-  final bool fromCache;
-
+  /// Remote setting, else cached setting: works offline too.
   bool isNeedForceUpdate(AppSettingDynamicNotifier setting) =>
-      setting.isNeedForceUpdate(currentVersion, useCache: fromCache);
+      setting.isNeedForceUpdate(currentVersion);
 
   String get linkUpdateForCurrentPlatform =>
       defaultTargetPlatform == TargetPlatform.iOS

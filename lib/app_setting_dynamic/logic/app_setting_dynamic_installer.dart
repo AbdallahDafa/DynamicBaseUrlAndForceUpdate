@@ -1,9 +1,9 @@
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_firebase_dynamic_response.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
 import 'package:flutter/foundation.dart';
 
 /// Call back with result.
-typedef AppSettingResultOnComplete = Function(AppSettingDynamicResponse? response);
+typedef AppSettingResultOnComplete = Function(AppSettingFirebaseDynamicResponse? response);
 
 /// Old static API, kept only so existing apps keep compiling.
 /// Everything forwards to [AppSettingDynamicNotifier.instance].
@@ -31,7 +31,7 @@ class AppSettingDynamicInstaller {
         firebaseBaseUrl: firebaseBaseUrl,
       );
 
-  static Future<AppSettingDynamicResponse?> download() => _notifier.download();
+  static Future<AppSettingFirebaseDynamicResponse?> download() => _notifier.download();
 
   static bool isCompleteDownloadData() => _notifier.isCompleteDownloadData;
 

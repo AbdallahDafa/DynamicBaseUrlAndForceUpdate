@@ -1,6 +1,6 @@
 
 
-class AppSettingDynamicResponse {
+class AppSettingFirebaseDynamicResponse {
 
   String? baseUrlDynamic;
   int? minVersionAndroid;
@@ -10,7 +10,7 @@ class AppSettingDynamicResponse {
 
 
 
-  AppSettingDynamicResponse.fromJson(Map<String, dynamic> json) {
+  AppSettingFirebaseDynamicResponse.fromJson(Map<String, dynamic> json) {
     baseUrlDynamic = json['base_url_dynamic'];
     minVersionAndroid = json['min_version_android'];
     minVersionIos = json['min_version_ios'];

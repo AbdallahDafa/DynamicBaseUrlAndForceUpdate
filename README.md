@@ -263,7 +263,6 @@ Future<void> main() async {
 * `AppSettingDynamicRunApp` provides `AppSettingDynamicNotifier` (Provider `ChangeNotifier`) to all the app
 ```
   runApp( AppSettingDynamicRunApp(
-      checkForceUpdateOnRoot: false, // force update is checked inside the home page (step 5)
       currentVersionValidateForForceUpdate: versionDevelopment,
       linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id12345678",
       linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.example.app",
@@ -278,18 +277,16 @@ Future<void> main() async {
   ));
 ```
 
-| Option | Default | |
-|---|---|---|
-| `checkForceUpdateOnRoot` | `true` | `true`: the whole app is replaced by the force-update screen as soon as it is needed (even on the splash). `false`: checked inside the home page by `AppSettingForceUpdateChecker` (step 5) |
-| `forceUpdateFromCache` | `true` | `true`: the cached min version is used right away, even offline. `false`: only a download of this session can force update (offline-first apps keep working offline) |
-| `downloadOnStart` | `false` | `true`: start the download when the app opens (no need to call it from the splash) |
+* nothing is downloaded from `main()` or `AppSettingDynamicRunApp`, nothing blocks the app start:
+  the download starts only from screens, the splash (optional, step 4) and the home page (required, step 5)
 
 
-### 4. Splash Screen : start the download, never wait for it
+### 4. Splash Screen (optional) : start the download early, never wait for it
 
-* the splash screen only **starts** the download, don't `await` it.
-  With fast, slow or no internet the splash takes the same time, the app keeps working
-  with the cached setting (or `domainDefault`), and the new setting is applied in background.
+* the splash screen can **start** the download to save time, never `await` it:
+  with fast, slow or no internet the splash takes the same time, and the app works
+  with the cached setting (or `domainDefault`) until the new one is downloaded.
+  The home page shares the same request (no second download)
 
 *  Code at initState() :
 ```
@@ -314,9 +311,9 @@ Future<void> main() async {
 * Notice : method    "navigateToHome();" make Navigate to screen after splash, example home screen
 
 
-### 5. Check Force Update Inside Home Page
+### 5. Home Page : Download + Check Force Update (required)
 
-* with `checkForceUpdateOnRoot: false`, wrap the content of your home page:
+* the home page always downloads the app setting (or shares the splash download) and checks force update, wrap its content:
 ```
   import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker.dart';
 
@@ -329,10 +326,14 @@ Future<void> main() async {
 ```
 
 * it checks right away with the cached setting, then again when the download finishes
-* it starts the download if the splash didn't, and tries again a failed download
-  (app opened offline) when the home page opens and when the app comes back to the foreground
+* it starts the download in background when the home page opens (if the splash didn't), and tries
+  again a failed download (app opened offline) when the home page opens and when the app comes back to the foreground
 * the force-update dialog is shown above all pages and the back button can't close it.
   It closes by itself when the new download says no update is needed (example: you decreased the min version)
+* apps with a login screen (that calls your api) before the home page: start the download from the splash,
+  and add `AppSettingForceUpdateChecker` to the login page too. On the first install there is no cache yet,
+  so if `domainDefault` stopped working the user would never reach the home page.
+  It's safe: the download and the dialog are shared, never doubled
 
 * Or rebuild any widget when the setting changes:
 ```
@@ -382,8 +383,7 @@ Due to static fields are initialized only once when the class is first loaded in
 * the app opens normally: `domain` comes from the cache (or `domainDefault` on the first install),
   the download fails silently and is tried again when the home page opens and when the app comes back to the foreground
 * the cached setting is saved by `shared_preferences`, one per `firebaseBaseUrl`
-* offline-first apps that must keep working offline even when the cached min version says "update":
-  set `forceUpdateFromCache: false`
+* force update is checked offline too: with the cached min version (last download)
 * for testing: `AppSettingDynamicNotifier.instance.clearCache()`
 
 ### 8- Migrate From `AppSettingDynamicInstaller` (deprecated)
@@ -391,11 +391,14 @@ Due to static fields are initialized only once when the class is first loaded in
 | Old | New |
 |---|---|
 | `AppSettingDynamicInstaller.setConfigBaseUrls(...)` | `await AppSettingDynamicNotifier.instance.setConfigBaseUrls(...)` |
-| `AppSettingDynamicInstaller.download()` | `context.read<AppSettingDynamicNotifier>().download()` (don't await it) |
+| `AppSettingDynamicInstaller.download()` | splash (optional): `context.read<AppSettingDynamicNotifier>().download()` (don't await it), home: `AppSettingForceUpdateChecker` |
 | `AppSettingDynamicInstaller.getDomain()` | `AppSettingDynamicNotifier.instance.domain` |
 | `AppSettingDynamicInstaller.isCompleteDownloadData()` | `appSetting.isCompleteDownloadData` |
 | `AppSettingDynamicInstaller.isValidVersionMinAllowed(v)` | `appSetting.isValidVersionMinAllowed(v)` |
 | `AppSettingDynamicInstaller.addOnCompleteSplash(...)` | not needed: the splash doesn't wait, use `AppSettingForceUpdateChecker` or `context.watch<AppSettingDynamicNotifier>()` |
+
+* upgrading from 1.0.7: `AppSettingDynamicRunApp` doesn't show the force-update screen on the root anymore,
+  add `AppSettingForceUpdateChecker` to your home page (step 5)
 
 ## Use at Any Framework : Like Native kotlin or swift :
 * How to Get dynamic app setting  Json Data :

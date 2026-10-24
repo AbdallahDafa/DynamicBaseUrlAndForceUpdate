@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_firebase_dynamic_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,14 +55,13 @@ enum AppSettingDomainSource {
 /// 2- wrap your app with `AppSettingDynamicRunApp(...)`, it provides this
 ///    notifier to the widget tree with `ChangeNotifierProvider`.
 ///
-/// 3- in the splash screen start the download, DON'T await it:
-/// ```dart
-/// context.read<AppSettingDynamicNotifier>().download();
-/// ```
+/// 3- the download starts only from a screen, never from main():
+///    - splash screen (optional, to start early), DON'T await it:
+///      `context.read<AppSettingDynamicNotifier>().download();`
+///    - home page (required): `AppSettingForceUpdateChecker(child: ...)`,
+///      it downloads (or shares the splash download) and checks force update.
 ///
-/// 4- in the home page: `AppSettingForceUpdateChecker(child: ...)`.
-///
-/// 5- in code without BuildContext (dio helper, di, endpoints):
+/// 4- in code without BuildContext (dio helper, di, endpoints):
 /// ```dart
 /// AppSettingDynamicNotifier.instance.domain
 /// ```
@@ -108,23 +107,23 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
   ///------------------------------------------------------------------ state
 
   AppSettingDynamicStatus _status = AppSettingDynamicStatus.initial;
-  AppSettingDynamicResponse? _remoteResponse;
-  AppSettingDynamicResponse? _cachedResponse;
-  Future<AppSettingDynamicResponse?>? _downloadFuture;
+  AppSettingFirebaseDynamicResponse? _remoteResponse;
+  AppSettingFirebaseDynamicResponse? _cachedResponse;
+  Future<AppSettingFirebaseDynamicResponse?>? _downloadFuture;
 
   /// State of the download from firebase (the cache is not a download).
   AppSettingDynamicStatus get status => _status;
 
   /// Downloaded from firebase in this session.
   /// `null` until downloaded, or when the download failed.
-  AppSettingDynamicResponse? get remoteResponse => _remoteResponse;
+  AppSettingFirebaseDynamicResponse? get remoteResponse => _remoteResponse;
 
   /// Last successful download saved on the device.
   /// `null` when nothing was ever downloaded on this device.
-  AppSettingDynamicResponse? get cachedResponse => _cachedResponse;
+  AppSettingFirebaseDynamicResponse? get cachedResponse => _cachedResponse;
 
   /// Best setting available right now: [remoteResponse], else [cachedResponse].
-  AppSettingDynamicResponse? get response => _remoteResponse ?? _cachedResponse;
+  AppSettingFirebaseDynamicResponse? get response => _remoteResponse ?? _cachedResponse;
 
   bool get isLoading => _status == AppSettingDynamicStatus.loading;
 
@@ -160,19 +159,19 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
 
   /// In case not valid, means it needs to force update.
   ///
-  /// [useCache] true: before the download finishes (or offline) the cached
-  /// min version is used. false: only a download of this session counts.
-  bool isValidVersionMinAllowed(int currentVersion, {bool useCache = true}) {
-    final minAllowed = _minVersionForCurrentPlatform(useCache: useCache);
+  /// Uses [response]: the remote setting, else the cached one, so the check
+  /// works offline too (before the download finishes or without internet).
+  bool isValidVersionMinAllowed(int currentVersion) {
+    final minAllowed = _minVersionForCurrentPlatform();
     if (minAllowed == null) return true;
     return currentVersion >= minAllowed;
   }
 
-  bool isNeedForceUpdate(int currentVersion, {bool useCache = true}) =>
-      !isValidVersionMinAllowed(currentVersion, useCache: useCache);
+  bool isNeedForceUpdate(int currentVersion) =>
+      !isValidVersionMinAllowed(currentVersion);
 
-  int? _minVersionForCurrentPlatform({required bool useCache}) {
-    final setting = useCache ? response : _remoteResponse;
+  int? _minVersionForCurrentPlatform() {
+    final setting = response;
     if (setting == null) return null;
     if (kIsWeb) return setting.minVersionWeb;
     switch (defaultTargetPlatform) {
@@ -187,32 +186,34 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
 
   ///------------------------------------------------------------------ download
 
-  /// Starts the download in background. Don't await it in the splash screen:
-  /// the app keeps working with the cache / [domainDefault], and listeners
-  /// are notified when it finishes.
+  /// Starts the download in background: the app keeps working with the
+  /// cache / [domainDefault], and listeners are notified when it finishes.
   ///
-  /// Downloads once: the splash screen, the run-app and the home page can all
-  /// call it, they share the same request.
+  /// Called only from screens, never from main(): the splash screen may call
+  /// it to start early (don't await it), and `AppSettingForceUpdateChecker`
+  /// always calls it in the home page.
+  ///
+  /// Downloads once: every call shares the same request.
   /// [retryIfFailed] true: downloads again when the last try failed
   /// (example: the app was opened offline).
   ///
   /// Never throws, never hangs: on no internet / timeout / bad data it
   /// completes with `null` and the cache stays as it is.
-  Future<AppSettingDynamicResponse?> download({bool retryIfFailed = false}) {
+  Future<AppSettingFirebaseDynamicResponse?> download({bool retryIfFailed = false}) {
     if (retryIfFailed && _status == AppSettingDynamicStatus.failed) {
       _downloadFuture = null;
     }
     return _downloadFuture ??= _downloadSettingData();
   }
 
-  Future<AppSettingDynamicResponse?> _downloadSettingData() async {
+  Future<AppSettingFirebaseDynamicResponse?> _downloadSettingData() async {
     // no notifyListeners() here: download() may be called from initState()
     _status = AppSettingDynamicStatus.loading;
 
     // let the current frame finish before notifyListeners() below
     await Future<void>.delayed(Duration.zero);
 
-    AppSettingDynamicResponse? result;
+    AppSettingFirebaseDynamicResponse? result;
     Dio? dio;
     try {
       final firebaseBaseUrl = _firebaseBaseUrl;
@@ -229,7 +230,7 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
           .timeout(timeout); // hard limit (covers DNS hangs)
       final data = responseDio.data;
       if (data is Map) {
-        result = AppSettingDynamicResponse.fromJson(
+        result = AppSettingFirebaseDynamicResponse.fromJson(
             Map<String, dynamic>.from(data));
       } else {
         debugPrint('AppSettingDynamicNotifier - download() - unexpected data: $data');
@@ -268,7 +269,7 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
       if (decoded is! Map) return;
       // a download that already finished (and saved) is newer than this read
       if (_remoteResponse != null) return;
-      _cachedResponse = AppSettingDynamicResponse.fromJson(
+      _cachedResponse = AppSettingFirebaseDynamicResponse.fromJson(
           Map<String, dynamic>.from(decoded));
       debugPrint('AppSettingDynamicNotifier - cache loaded - $_cachedResponse');
       notifyListeners();
@@ -277,7 +278,7 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> _saveCache(AppSettingDynamicResponse setting) async {
+  Future<void> _saveCache(AppSettingFirebaseDynamicResponse setting) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final saved = await prefs.setString(_cacheKey, jsonEncode(setting.toJson()));
