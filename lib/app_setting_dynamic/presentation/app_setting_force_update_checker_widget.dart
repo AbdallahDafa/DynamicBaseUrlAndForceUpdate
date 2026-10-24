@@ -1,3 +1,4 @@
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_force_update_config.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_dialog.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class _AppSettingForceUpdateCheckerWidgetState extends State<AppSettingForceUpda
     if (_dialogRoute?.isActive ?? false) return;
 
     final config = context.read<AppSettingForceUpdateConfig>();
-    if (!config.isNeedForceUpdate(_setting)) return;
+    if (!_setting.isNeedForceUpdate(config.currentVersion)) return;
 
     final route = DialogRoute<void>(
       context: context,
@@ -119,7 +120,7 @@ class _AutoCloseForceUpdateDialogState extends State<_AutoCloseForceUpdateDialog
   }
 
   void _closeIfNotNeeded() {
-    if (!mounted || widget.config.isNeedForceUpdate(widget.setting)) return;
+    if (!mounted || widget.setting.isNeedForceUpdate(widget.config.currentVersion)) return;
     final route = ModalRoute.of(context);
     if (route == null || !route.isActive) return;
     widget.setting.removeListener(_closeIfNotNeeded); // close once

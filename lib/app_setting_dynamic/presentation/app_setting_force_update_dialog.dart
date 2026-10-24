@@ -1,38 +1,6 @@
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_force_update_config.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/intent_force_update.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-/// Force-update settings given to `AppSettingDynamicRunApp`.
-/// It provides them to the app (Provider) for `AppSettingForceUpdateChecker`.
-@immutable
-class AppSettingForceUpdateConfig {
-  const AppSettingForceUpdateConfig({
-    required this.currentVersion,
-    required this.linkUpdateApplestore,
-    required this.linkUpdateGoogleplay,
-    this.title,
-    this.message,
-    this.button,
-  });
-
-  /// Version of this build, compared with the min version from firebase.
-  final int currentVersion;
-  final String linkUpdateApplestore;
-  final String linkUpdateGoogleplay;
-  final String? title;
-  final String? message;
-  final String? button;
-
-  /// Remote setting, else cached setting: works offline too.
-  bool isNeedForceUpdate(AppSettingDynamicNotifier setting) =>
-      setting.isNeedForceUpdate(currentVersion);
-
-  String get linkUpdateForCurrentPlatform =>
-      defaultTargetPlatform == TargetPlatform.iOS
-          ? linkUpdateApplestore
-          : linkUpdateGoogleplay;
-}
 
 /// Force-update dialog: the back button can't close it.
 class AppSettingForceUpdateDialog extends StatelessWidget {

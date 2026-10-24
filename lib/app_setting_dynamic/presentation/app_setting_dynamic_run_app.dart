@@ -1,5 +1,5 @@
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_force_update_config.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,6 +1,6 @@
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_dynamic_run_app.dart';
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker_widget.dart';
 import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
 
 import 'package:flutter/material.dart';
@@ -14,8 +14,8 @@ Future<void> main() async {
   /// loads the last setting saved on the device (local read, no network):
   /// the base url is ready before the first api call, even offline
   await AppSettingDynamicNotifier.instance.setConfigBaseUrls(
-    domainDefault: 'https://test4.maqsafy.com',
-    firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app",
+    domainDefault: 'https://mydomainexample.com',
+    firebaseBaseUrl: "https://project-id-firebase-example.firebasedatabase.app",
   );
 
   /// (Optional In Case Use "DI") init "di" here, after setConfigBaseUrls()
@@ -23,8 +23,8 @@ Future<void> main() async {
 
   runApp( AppSettingDynamicRunApp(
     currentVersionValidateForForceUpdate: 115,
-    linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id1493287507",
-    linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.maqsafy",
+    linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id12345678",
+    linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.example.com",
     onNeedUpdateDioHelperBaseUrl: (){
       /// (Optional In Case Use "DI" )update "di" dependant inject of baseurl
      // di.reRegisterDependentInjectionForDioHelper();
