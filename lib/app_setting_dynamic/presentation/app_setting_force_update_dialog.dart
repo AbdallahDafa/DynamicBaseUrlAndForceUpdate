@@ -1,5 +1,5 @@
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_force_update_config.dart';
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/intent_force_update.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/helper/intent_force_update.dart';
 import 'package:flutter/material.dart';
 
 /// Force-update dialog: the back button can't close it.
