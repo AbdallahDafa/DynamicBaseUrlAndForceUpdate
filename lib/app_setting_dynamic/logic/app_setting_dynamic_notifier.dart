@@ -2,37 +2,16 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_firebase_dynamic_response.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/enum/app_setting_domain_source.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/enum/app_setting_dynamic_status.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// State of downloading the app setting from firebase.
-enum AppSettingDynamicStatus {
-  /// `download()` not called yet.
-  initial,
-
-  /// Request in progress.
-  loading,
-
-  /// Downloaded: dynamic base url + min versions are available (and cached).
-  loaded,
-
-  /// No internet / timeout / bad data: the app keeps working with the
-  /// cached setting, or `domainDefault` when nothing is cached.
-  failed,
-}
-
-/// Where [AppSettingDynamicNotifier.domain] comes from right now.
-enum AppSettingDomainSource {
-  /// 1- downloaded from firebase in this session.
-  remote,
-
-  /// 2- last successful download, saved on the device.
-  cache,
-
-  /// 3- `domainDefault` passed to `setConfigBaseUrls()`.
-  domainDefault,
-}
+// the getters `status` and `domainSource` return these enums:
+// importing this notifier is enough to use them.
+export 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/enum/app_setting_domain_source.dart';
+export 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/enum/app_setting_dynamic_status.dart';
 
 /// App setting dynamic as a Provider `ChangeNotifier`:
 ///   >>> base url dynamic

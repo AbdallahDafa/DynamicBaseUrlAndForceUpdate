@@ -1,6 +1,3 @@
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_dynamic_run_app.dart';
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker_widget.dart';
 import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
 
 import 'package:flutter/material.dart';

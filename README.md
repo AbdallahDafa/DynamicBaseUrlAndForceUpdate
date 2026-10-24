@@ -207,6 +207,11 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
 
 ## Config In Flutter:
 
+* one import for everything (`AppSettingDynamicNotifier`, `AppSettingDynamicRunApp`, `AppSettingForceUpdateCheckerWidget`, ...):
+```
+import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
+```
+
 
 ### 1. How to Get URL with ProjectId firebase:
 
@@ -290,6 +295,7 @@ Future<void> main() async {
 
 *  Code at initState() :
 ```
+  import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
   import 'package:provider/provider.dart';
 
   @override
@@ -315,11 +321,11 @@ Future<void> main() async {
 
 * the home page always downloads the app setting (or shares the splash download) and checks force update, wrap its content:
 ```
-  import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker.dart';
+  import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
 
   @override
   Widget build(BuildContext context) {
-    return AppSettingForceUpdateChecker(
+    return AppSettingForceUpdateCheckerWidget(
       child: Scaffold( ... ),
     );
   }
@@ -331,7 +337,7 @@ Future<void> main() async {
 * the force-update dialog is shown above all pages and the back button can't close it.
   It closes by itself when the new download says no update is needed (example: you decreased the min version)
 * apps with a login screen (that calls your api) before the home page: start the download from the splash,
-  and add `AppSettingForceUpdateChecker` to the login page too. On the first install there is no cache yet,
+  and add `AppSettingForceUpdateCheckerWidget` to the login page too. On the first install there is no cache yet,
   so if `domainDefault` stopped working the user would never reach the home page.
   It's safe: the download and the dialog are shared, never doubled
 
@@ -342,7 +348,7 @@ Future<void> main() async {
   appSetting.status;                  // download: initial, loading, loaded, failed
   appSetting.isLoading;
   appSetting.isCompleteDownloadData;
-  appSetting.response;                // AppSettingDynamicResponse? (remote, else cache)
+  appSetting.response;                // AppSettingFirebaseDynamicResponse? (remote, else cache)
   appSetting.remoteResponse;          // downloaded in this session
   appSetting.cachedResponse;          // last download saved on the device
   appSetting.domain;
@@ -391,14 +397,14 @@ Due to static fields are initialized only once when the class is first loaded in
 | Old | New |
 |---|---|
 | `AppSettingDynamicInstaller.setConfigBaseUrls(...)` | `await AppSettingDynamicNotifier.instance.setConfigBaseUrls(...)` |
-| `AppSettingDynamicInstaller.download()` | splash (optional): `context.read<AppSettingDynamicNotifier>().download()` (don't await it), home: `AppSettingForceUpdateChecker` |
+| `AppSettingDynamicInstaller.download()` | splash (optional): `context.read<AppSettingDynamicNotifier>().download()` (don't await it), home: `AppSettingForceUpdateCheckerWidget` |
 | `AppSettingDynamicInstaller.getDomain()` | `AppSettingDynamicNotifier.instance.domain` |
 | `AppSettingDynamicInstaller.isCompleteDownloadData()` | `appSetting.isCompleteDownloadData` |
 | `AppSettingDynamicInstaller.isValidVersionMinAllowed(v)` | `appSetting.isValidVersionMinAllowed(v)` |
-| `AppSettingDynamicInstaller.addOnCompleteSplash(...)` | not needed: the splash doesn't wait, use `AppSettingForceUpdateChecker` or `context.watch<AppSettingDynamicNotifier>()` |
+| `AppSettingDynamicInstaller.addOnCompleteSplash(...)` | not needed: the splash doesn't wait, use `AppSettingForceUpdateCheckerWidget` or `context.watch<AppSettingDynamicNotifier>()` |
 
 * upgrading from 1.0.7: `AppSettingDynamicRunApp` doesn't show the force-update screen on the root anymore,
-  add `AppSettingForceUpdateChecker` to your home page (step 5)
+  add `AppSettingForceUpdateCheckerWidget` to your home page (step 5)
 
 ## Use at Any Framework : Like Native kotlin or swift :
 * How to Get dynamic app setting  Json Data :
