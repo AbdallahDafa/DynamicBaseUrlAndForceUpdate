@@ -1,20 +1,28 @@
-import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_installer.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_dynamic_run_app.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker.dart';
 import 'package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
 
-  AppSettingDynamicInstaller.setConfigBaseUrls(
+  /// loads the last setting saved on the device (local read, no network):
+  /// the base url is ready before the first api call, even offline
+  await AppSettingDynamicNotifier.instance.setConfigBaseUrls(
     domainDefault: 'https://test4.maqsafy.com',
     firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 
+  /// (Optional In Case Use "DI") init "di" here, after setConfigBaseUrls()
+  // await di.init();
+
   runApp( AppSettingDynamicRunApp(
+    checkForceUpdateOnRoot: false, // checked inside HomePage by AppSettingForceUpdateChecker
     currentVersionValidateForForceUpdate: 115,
     linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id1493287507",
     linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.maqsafy",
@@ -23,20 +31,78 @@ void main() {
      // di.reRegisterDependentInjectionForDioHelper();
     },
     builder: (context)   {
-      return MyApp();
+      return const MyApp();
     },
   ));
 }
 
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+
+/// Starts the download, never waits for it: same splash time with fast,
+/// slow or no internet.
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// background download, DON'T await it
+    context.read<AppSettingDynamicNotifier>().download();
+
+    /// your splash animation / video time, nothing about the network
+    _timer = Timer(const Duration(seconds: 2), _navigateToHome);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _navigateToHome() {
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: FlutterLogo(size: 120)),
+    );
+  }
+}
+
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   String _platformVersion = 'Unknown';
   final _dynamicChnageBaseUrlAndForceUpdatePlugin = DynamicBaseUrlAndForceUpdate();
 
@@ -70,14 +136,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    /// rebuilds when the app setting finishes downloading
+    final appSetting = context.watch<AppSettingDynamicNotifier>();
+
+    /// force update is checked here (cache first, then the download)
+    return AppSettingForceUpdateChecker(
+      child: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text(
+            'Running on: $_platformVersion\n'
+            'Download: ${appSetting.status.name}\n'
+            'Base url: ${appSetting.domain}\n'
+            'Base url from: ${appSetting.domainSource.name}\n',
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

@@ -24,6 +24,12 @@ dependencies:
   # intent
   url_launcher: any #6.2.6 #flutter 3.22.0
 
+  # state management
+  provider: any #^6.1.2
+
+  # cache: last downloaded app setting saved on the device
+  shared_preferences: any #^2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

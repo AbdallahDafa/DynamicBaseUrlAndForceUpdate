@@ -32,7 +32,7 @@
 
 * create account email from console of firebase project
 * visit link Console, then enable Authentication Type Email :
-  https://console.firebase.google.com/project/maqsafy-egypt/authentication/users
+  https://console.firebase.google.com/project/example-project-name/authentication/users
 
 <img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_enable_auth_by_email.png" alt="firebase_enable_auth_by_email" width="600" />
 
@@ -94,7 +94,7 @@ developer.firebase@yourdomain.com
 
 * To Get Url with project id :
   . Just visit console firebase  >> realtime database >> will found in database url
-  .  example like to:    https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
+  .  example like to:    https://example-project-name-firebase-id.firebasedatabase.app/
 
 
 * Header add : "Content-Type" value "application/json"
@@ -110,7 +110,7 @@ developer.firebase@yourdomain.com
   https://<project-id>.firebaseio.com/
 
 * example
-  https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
+  https://example-project-name-firebase-id.firebasedatabase.app/
 
 <img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/firebase_create_data.png" alt="firebase_create_data" width="600" />
 
@@ -120,10 +120,10 @@ developer.firebase@yourdomain.com
 * this public data, make it public to get this information no validation needed
 
 * full url : project id with endpoint + end with ".json"
-  https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting/
+  https://example-project-name-firebase-id.firebasedatabase.app/app_setting/
 
 * full with .json
-  GET https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting.json
+  GET https://example-project-name-firebase-id.firebasedatabase.app/app_setting.json
 
 <img src="https://raw.githubusercontent.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate/refs/heads/main/screenshot/postman_get_app_setting.png" alt="postman_get_app_setting" width="600" />
 
@@ -171,7 +171,7 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
   /app_setting/force_update_min_version
 
 - example: Http Request with .json + auth in paramter:
-  PATCH https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting.json?auth={{firebase_access_token_admin}}
+  PATCH https://example-project-name-firebase-id.firebasedatabase.app/app_setting.json?auth={{firebase_access_token_admin}}
 * payload
 ```
 {
@@ -189,7 +189,7 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
   /app_setting/base_url_dynamic
 
 - example: Http Request with .json + auth in paramter:  
-  PATCH https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting.json?auth={{firebase_access_token_admin}}
+  PATCH https://example-project-name-firebase-id.firebasedatabase.app/app_setting.json?auth={{firebase_access_token_admin}}
 * payload
 ```
 {
@@ -216,7 +216,7 @@ pm.environment.set("firebase_access_token_admin", responseData.idToken);
   https://<project-id>.firebaseio.com/
 
 * example
-  https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/
+  https://example-project-name-firebase-id.firebasedatabase.app/
 
 
 ### 2. Set method reRegister in "di" ( Optional For DependentInjection  )
@@ -240,27 +240,36 @@ Future reRegisterDependentInjectionForDioHelper() async {
 
 ### 3. in main method write :
 
-* before call the "di" dependence injection , set default baseUrl:
-``` 
-  /// before init Dio Helper Config 
-  ///    >> example if you using dependant   indjection 
-  ///        must to set baseUrl default before init dio helper class
-  AppSettingDynamicInstaller.setConfigBaseUrls(
+* before call the "di" dependence injection, set default baseUrl and **await** it:
+```
+Future<void> main() async {
+
+  /// before init Dio Helper Config ("di")
+  ///    also loads the last setting saved on the device (cache):
+  ///    local read, no network, works offline
+  await AppSettingDynamicNotifier.instance.setConfigBaseUrls(
     domainDefault: 'https://test4.maqsafy.com',
-    firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app",
+    firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.firebasedatabase.app",
   );
 
+  await di.init(); // dio helper reads AppSettingDynamicNotifier.instance.domain
+
+  runApp( ... ); // next step
+}
 ```
 (  If app not have "DI" write before runApp() at any line)
 
 * wrap MyApp()  in case there, then update "di/dio helper"
+* `AppSettingDynamicRunApp` provides `AppSettingDynamicNotifier` (Provider `ChangeNotifier`) to all the app
 ```
   runApp( AppSettingDynamicRunApp(
+      checkForceUpdateOnRoot: false, // force update is checked inside the home page (step 5)
       currentVersionValidateForForceUpdate: versionDevelopment,
-      linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id1493287507",
-      linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.maqsafy",
+      linkUpdateApplestore: "https://apps.apple.com/ag/app/%D9%85%D9%82%D8%B5%D9%81%D9%8A/id12345678",
+      linkUpdateGoogleplay:  "https://play.google.com/store/apps/details?id=com.example.app",
       onNeedUpdateDioHelperBaseUrl: (){
-        /// (Optional In Case Use "DI" )update "di" dependant inject of baseurl
+        /// called only when the base url changes while the app is running
+        /// (a new url downloaded from firebase)
         di.reRegisterDependentInjectionForDioHelper();
       },
       builder: (context)   {
@@ -269,75 +278,124 @@ Future reRegisterDependentInjectionForDioHelper() async {
   ));
 ```
 
+| Option | Default | |
+|---|---|---|
+| `checkForceUpdateOnRoot` | `true` | `true`: the whole app is replaced by the force-update screen as soon as it is needed (even on the splash). `false`: checked inside the home page by `AppSettingForceUpdateChecker` (step 5) |
+| `forceUpdateFromCache` | `true` | `true`: the cached min version is used right away, even offline. `false`: only a download of this session can force update (offline-first apps keep working offline) |
+| `downloadOnStart` | `false` | `true`: start the download when the app opens (no need to call it from the splash) |
 
-### 4. In Video Splash Screen
 
-* in case you have video splash screen, we can save time of user, while user watching on video splash
-  we download data of Setting Dynamic
+### 4. Splash Screen : start the download, never wait for it
 
-#### - example: we assume you have screen called "SplashVideoScreen.dart" type WidgetStateFull
+* the splash screen only **starts** the download, don't `await` it.
+  With fast, slow or no internet the splash takes the same time, the app keeps working
+  with the cached setting (or `domainDefault`), and the new setting is applied in background.
 
 *  Code at initState() :
 ```
+  import 'package:provider/provider.dart';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async { 
-      await setupAppSettingDynamicListener(); 
-    });
+    /// background download: never throws, never hangs, DON'T await it
+    context.read<AppSettingDynamicNotifier>().download();
   }
-
-  setupAppSettingDynamicListener() async {
-    await AppSettingDynamicInstaller.addOnCompleteSplash( ( response ) {
-
-        /// case:  video in progress, while api setting completed before video
-        if(isVideoSplashCompleted  == false ) {
-          return;
-
-          /// case:  video completed, while api setting completed after video
-        } else {
-          chooseNextPageLive();
-        }
-
-      });
-  }
-
 ```
 
-* Code at video player controller listener
-* set the "isVideoSplashCompleted" to be true, when video controller say it's completed video showing
-``` 
-  listenerVideoCompleted() async {
-      
-      isVideoSplashCompleted = true;
-
-      if( AppSettingDynamicInstaller.isCompleteDownloadData() ){
-          navigateToHome();
-      }
-    }
+* navigate to home when your splash is done (animation / timer / video), nothing about the network:
+```
+  /// example: video splash screen, at video player controller listener
+  listenerVideoCompleted() {
+      navigateToHome();
   }
 ```
 
 * Notice : method    "navigateToHome();" make Navigate to screen after splash, example home screen
 
-### 5- How To Get New BaseUrl Domain Dynamic
 
-* Get BaseUrl dynamic
+### 5. Check Force Update Inside Home Page
+
+* with `checkForceUpdateOnRoot: false`, wrap the content of your home page:
 ```
-var baseUrl = AppSettingDynamicInstaller.getDomain(); 
+  import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/presentation/app_setting_force_update_checker.dart';
+
+  @override
+  Widget build(BuildContext context) {
+    return AppSettingForceUpdateChecker(
+      child: Scaffold( ... ),
+    );
+  }
+```
+
+* it checks right away with the cached setting, then again when the download finishes
+* it starts the download if the splash didn't, and tries again a failed download
+  (app opened offline) when the home page opens and when the app comes back to the foreground
+* the force-update dialog is shown above all pages and the back button can't close it.
+  It closes by itself when the new download says no update is needed (example: you decreased the min version)
+
+* Or rebuild any widget when the setting changes:
+```
+  final appSetting = context.watch<AppSettingDynamicNotifier>();
+
+  appSetting.status;                  // download: initial, loading, loaded, failed
+  appSetting.isLoading;
+  appSetting.isCompleteDownloadData;
+  appSetting.response;                // AppSettingDynamicResponse? (remote, else cache)
+  appSetting.remoteResponse;          // downloaded in this session
+  appSetting.cachedResponse;          // last download saved on the device
+  appSetting.domain;
+  appSetting.domainSource;            // remote, cache, domainDefault
+```
+
+### 6- How To Get New BaseUrl Domain Dynamic
+
+* `domain` returns the base url by priority (sync, never waits for the network):
+  1. remote response (downloaded in this session), if found
+  2. cache (last download saved on the device), if found
+  3. `domainDefault` written in `setConfigBaseUrls()`
+
+* Get BaseUrl dynamic (works without BuildContext, example: dio helper / di)
+```
+var baseUrl = AppSettingDynamicNotifier.instance.domain; 
+```
+
+* inside widgets you can also use
+```
+var baseUrl = context.read<AppSettingDynamicNotifier>().domain; 
 ```
 
 * How to get From Endpoint Variable
 #### => old way
 ```
-static String baseUrlv2 = '${AppSettingDynamicInstaller.getDomain()}/api/v2/';
+static String baseUrlv2 = '${AppSettingDynamicNotifier.instance.domain}/api/v2/';
 ```
 #### => New way get dynamic using method return "=>"
 ```
-  static String baseUrlv2() =>  AppSettingDynamicInstaller.getDomain() + '/api/v2/';
+  static String baseUrlv2() =>  AppSettingDynamicNotifier.instance.domain + '/api/v2/';
 ```
 (Notice: need to remove "static" or change static filed to method function . 
 Due to static fields are initialized only once when the class is first loaded into memory. )
+
+### 7- Apps Opened Offline
+
+* the app opens normally: `domain` comes from the cache (or `domainDefault` on the first install),
+  the download fails silently and is tried again when the home page opens and when the app comes back to the foreground
+* the cached setting is saved by `shared_preferences`, one per `firebaseBaseUrl`
+* offline-first apps that must keep working offline even when the cached min version says "update":
+  set `forceUpdateFromCache: false`
+* for testing: `AppSettingDynamicNotifier.instance.clearCache()`
+
+### 8- Migrate From `AppSettingDynamicInstaller` (deprecated)
+
+| Old | New |
+|---|---|
+| `AppSettingDynamicInstaller.setConfigBaseUrls(...)` | `await AppSettingDynamicNotifier.instance.setConfigBaseUrls(...)` |
+| `AppSettingDynamicInstaller.download()` | `context.read<AppSettingDynamicNotifier>().download()` (don't await it) |
+| `AppSettingDynamicInstaller.getDomain()` | `AppSettingDynamicNotifier.instance.domain` |
+| `AppSettingDynamicInstaller.isCompleteDownloadData()` | `appSetting.isCompleteDownloadData` |
+| `AppSettingDynamicInstaller.isValidVersionMinAllowed(v)` | `appSetting.isValidVersionMinAllowed(v)` |
+| `AppSettingDynamicInstaller.addOnCompleteSplash(...)` | not needed: the splash doesn't wait, use `AppSettingForceUpdateChecker` or `context.watch<AppSettingDynamicNotifier>()` |
 
 ## Use at Any Framework : Like Native kotlin or swift :
 * How to Get dynamic app setting  Json Data :
@@ -345,10 +403,10 @@ Due to static fields are initialized only once when the class is first loaded in
 * this public data, make it public to get this information no validation needed
 
 * full url : project id with endpoint + end with ".json" + parmeter auth token "auth=accessToken"
-  https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting/
+  https://example-project-name-firebase-id.firebasedatabase.app/app_setting/
 
 * full with .json
-  GET https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app/app_setting.json
+  GET https://example-project-name-firebase-id.firebasedatabase.app/app_setting.json
 
 
 
@@ -357,44 +415,11 @@ Due to static fields are initialized only once when the class is first loaded in
 -----
 
 
-# Developed By Company MASARAT
-
-## Company
-
-<img style="width: 100%;" src="https://raw.githubusercontent.com/AbdallahDafa/hyper_pay_flutter_plugin/refs/heads/main/screenshot/company/cover_masarat.png"  />
-
-
-<table style="background-color: #f0f0f0; border-collapse: collapse; width: 100%;" >
-
-  <tr  > 
-    <td >
-      <img src="https://raw.githubusercontent.com/AbdallahDafa/hyper_pay_flutter_plugin/refs/heads/main/screenshot/company/logo_masarat.png"  width="80"/>
-    </td>
-    <td>
-      <h3>MASARAT<br/>
-      <a href="https://www.linkedin.com/company/dafa-sa/">Linkedin</a><br/>
-      <a href="https://masaratech.com/">Website</a></h3>
-    </td>
-  </tr>
-</table>
-
-
-## Team Member
+# Developed By 
+  
 
 <table style="background-color: #1B4354; border-collapse: collapse; " >
-
-
-  <tr style="background-color: #a9a9a9;" > 
-    <td >
-      <img src="https://raw.githubusercontent.com/AbdallahDafa/hyper_pay_flutter_plugin/refs/heads/main/screenshot/dev-teachlead.png"  width="80"/>
-    </td>
-    <td>
-      <h3>Teach Lead<br/>Elamir Mahmoud<br/>
-      <a href="https://www.linkedin.com/in/elamir-mahmoud-b37029104/">Linkedin</a><br/>
-      at MASARAT company</h3>
-    </td>
-  </tr>
-
+ 
   <tr>
     <td>
       <img src="https://raw.githubusercontent.com/AbdallahDafa/hyper_pay_flutter_plugin/refs/heads/main/screenshot/dev-abdallah.png"  width="80"/>
@@ -414,32 +439,4 @@ Due to static fields are initialized only once when the class is first loaded in
 
 -----
 
-
-## MASARAT Proprietary Software License
-
-````
-MASARAT Proprietary Software License
-
-Copyright © 2025 MASARAT Company. All rights reserved.
-
-This software is licensed, not sold. By downloading or using this software, you agree to the following terms:
-
-1. Permitted Use
-   You are granted a non-exclusive, non-transferable, revocable license to download and use this software only in its original form for personal or internal business purposes.
-
-2. Restrictions
-   You may not, under any circumstance:
-   - Copy or reproduce any part of the software or its source code.
-   - Modify, adapt, translate, reverse-engineer, decompile, or disassemble the software.
-
-3. Ownership
-   All rights, title, and interest in and to the software remain the exclusive property of MASARAT.
-
-4. Termination
-   This license is effective until terminated. It will terminate automatically without notice if you breach any of its terms. Upon termination, you must cease all use and delete all copies.
-
-5. No Warranty
-   This software is provided "as is", without warranty of any kind. MASARAT shall not be liable for any damages resulting from its use.
-
-````
-
+ 

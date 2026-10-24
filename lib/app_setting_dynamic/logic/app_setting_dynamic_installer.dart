@@ -1,138 +1,68 @@
-
-import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/app_setting_dynamic_response.dart';
+import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_setting_dynamic_notifier.dart';
 import 'package:flutter/foundation.dart';
 
+/// Call back with result.
+typedef AppSettingResultOnComplete = Function(AppSettingDynamicResponse? response);
 
-
-/**
- * call back with result
- */
-typedef AppSettingResultOnComplete = Function( AppSettingDynamicResponse? response );
-
-
-/**
- * ----------------------- how to use
-  1- inside main() :
-
-    /// app setting dynamic
-    ///   >>> get base url
-    ///   >>> get min version to force update
-    AppSettingDynamicController.setup(
-    domainDefault: 'https://test4.maqsafy.com',
-    firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app",
-    );
-
- 2- in splash screen video
-
-
- */
+/// Old static API, kept only so existing apps keep compiling.
+/// Everything forwards to [AppSettingDynamicNotifier.instance].
+@Deprecated(
+  'Use AppSettingDynamicNotifier.instance, or '
+  'context.read<AppSettingDynamicNotifier>() / context.watch<AppSettingDynamicNotifier>()',
+)
 class AppSettingDynamicInstaller {
+  AppSettingDynamicInstaller._();
 
+  static AppSettingDynamicNotifier get _notifier => AppSettingDynamicNotifier.instance;
 
-  /**
-   * exmaple
-   *
-   * String domainDefault = 'https://test4.maqsafy.com';
-   */
-  static  String? domainDefault;
+  static String? get domainDefault => _notifier.domainDefault;
+  static String? get firebaseBaseUrl => _notifier.firebaseBaseUrl;
 
-  /**
-   * example:
-   *   // String firebaseBaseUrl = "https://maqsafy-egypt-default-rtdb.asia-southeast1.firebasedatabase.app";
+  static Duration get timeout => _notifier.timeout;
+  static set timeout(Duration value) => _notifier.timeout = value;
 
-   */
-  static String? firebaseBaseUrl;
-
-  static AppSettingResultOnComplete? onCompleteSplash;
-  static AppSettingResultOnComplete? onCompleteRunApp;
-  static bool  _isCompleteLoading = false;
-
-  static AppSettingDynamicResponse? _response;
-
-
-  ///------------------------------------------------------------------ public setup
-
-  static  setConfigBaseUrls(   {
+  static Future<void> setConfigBaseUrls({
     required String domainDefault,
     required String firebaseBaseUrl,
-  })  {
-    print("setConfigUrls()");
-    AppSettingDynamicInstaller.domainDefault = domainDefault;
-    AppSettingDynamicInstaller.firebaseBaseUrl = firebaseBaseUrl;
+  }) =>
+      _notifier.setConfigBaseUrls(
+        domainDefault: domainDefault,
+        firebaseBaseUrl: firebaseBaseUrl,
+      );
+
+  static Future<AppSettingDynamicResponse?> download() => _notifier.download();
+
+  static bool isCompleteDownloadData() => _notifier.isCompleteDownloadData;
+
+  static bool isValidVersionMinAllowed(int currentVersion) =>
+      _notifier.isValidVersionMinAllowed(currentVersion);
+
+  static String getDomain() => _notifier.domain;
+
+  static VoidCallback? _splashListener;
+  static VoidCallback? _runAppListener;
+
+  static Future addOnCompleteSplash(AppSettingResultOnComplete onComplete) async {
+    _splashListener = _replaceListener(_splashListener, onComplete);
   }
 
-
-  static Future<AppSettingDynamicResponse?> download( )  async {
-    await _downloadSettingData();
-    return _response;
+  static Future addOnCompleteRunApp(AppSettingResultOnComplete onComplete) async {
+    _runAppListener = _replaceListener(_runAppListener, onComplete);
   }
 
-  static Future addOnCompleteRunApp( AppSettingResultOnComplete  onComplete)  async {
-    print("AppSettingResultOnComplete - addOnCompleteRunApp()");
-    AppSettingDynamicInstaller.onCompleteRunApp = onComplete;
-
-    if( isCompleteDownloadData() ) onComplete( _response);
-  }
-
-  static Future addOnCompleteSplash( AppSettingResultOnComplete  onComplete)  async {
-    print("AppSettingResultOnComplete - addOnCompleteSplash()");
-    AppSettingDynamicInstaller.onCompleteSplash = onComplete;
-
-    if( isCompleteDownloadData() ) onComplete( _response);
-  }
-
-  ///-----------------------------------------------------------------  public methods utils
-
-  static bool isCompleteDownloadData() =>   _isCompleteLoading;
-
-
-  /// in case not valid, means it's need to forceUpdate
-  static bool isValidVersionMinAllowed( int currentVersion )  {
-    //check mobile
-    if (kIsWeb) {
-      var minAllowed =     AppSettingDynamicInstaller._response?.minVersionWeb??0;
-      if( minAllowed == currentVersion ) return true;
-      return  minAllowed <  currentVersion;
-    } else if   (Platform.isAndroid) {
-      var minAllowed =     AppSettingDynamicInstaller._response?.minVersionAndroid??0;
-      if( minAllowed == currentVersion ) return true;
-      return  minAllowed <  currentVersion;
-    } else if (Platform.isIOS) {
-      var minAllowed =     AppSettingDynamicInstaller._response?.minVersionIos??0;
-      if( minAllowed == currentVersion ) return true;
-      return  minAllowed < currentVersion ;
+  /// same behaviour as before: one callback per slot, called right away
+  /// when the download already completed, otherwise when it completes.
+  static VoidCallback _replaceListener(
+    VoidCallback? oldListener,
+    AppSettingResultOnComplete onComplete,
+  ) {
+    if (oldListener != null) _notifier.removeListener(oldListener);
+    if (_notifier.isCompleteDownloadData) onComplete(_notifier.response);
+    void listener() {
+      if (_notifier.isCompleteDownloadData) onComplete(_notifier.response);
     }
-    return true;
+    _notifier.addListener(listener);
+    return listener;
   }
-
-//-----------------------------------------------------------------------------  domains
-
-  static String getDomain() {
-    //print("AppSettingDynamicController - getDomain() - start ");
-    if(AppSettingDynamicInstaller._response != null  ){
-      var result = AppSettingDynamicInstaller._response?.baseUrlDynamic??domainDefault??"";
-      //print("AppSettingDynamicController - getDomain() - result: $result");
-      return result ;
-    } else {
-      //print("AppSettingDynamicController - getDomain() - domainDefault: $domainDefault");
-      return domainDefault??"";
-    }
-  }
-
-  ///--------------------------------------------------------------------- setup
-
-  static _downloadSettingData() async {
-    final dio = Dio();
-    final responseDio = await dio.get('$firebaseBaseUrl/app_setting.json');
-    // print('AppSettingDynamic -  _downloadSettingData() - json: ${responseDio.data}');
-    _response = AppSettingDynamicResponse.fromJson(responseDio.data);
-    _isCompleteLoading = true;
-    print('AppSettingDynamic -  _downloadSettingData() - AppSettingDynamicResponse: ${_response}');
-    if(onCompleteRunApp != null )onCompleteRunApp!(_response);
-    if(onCompleteSplash != null )onCompleteSplash!(_response);
-  }
-
 }
