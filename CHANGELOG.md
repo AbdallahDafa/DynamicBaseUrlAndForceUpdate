@@ -1,4 +1,4 @@
-## Unreleased
+## 1.0.8
 
 * refactor: `AppSettingDynamicInstaller` replaced by `AppSettingDynamicNotifier` (Provider `ChangeNotifier`)
 * `AppSettingDynamicRunApp` provides the notifier to the app with `ChangeNotifierProvider`
@@ -22,6 +22,16 @@
 * add dependence `shared_preferences`
 * one import for everything: `package:dynamic_base_url_and_force_update/dynamic_base_url_and_force_update.dart`
   now exports the whole public API, no need to import files from `app_setting_dynamic/`
+* BREAKING: `AppSettingDynamicResponse` renamed to `AppSettingFirebaseDynamicResponse`
+  (file `app_setting_dynamic/data/app_setting_firebase_dynamic_response.dart`)
+* BREAKING: files moved: `intent_force_update.dart` to `app_setting_dynamic/helper/`,
+  `log/local_log.dart` to `app_setting_dynamic/logic/` (use the one import above)
+* new `AppSettingForceUpdateDialog` and `AppSettingForceUpdateConfig`
+* new in the notifier: `status` (`AppSettingDynamicStatus`), `isNeedForceUpdate()`,
+  `timeout` (default 8 seconds)
+* the download never throws: on no internet / timeout / bad data the app keeps the cache or `domainDefault`
+* new `DynamicBaseUrlAndForceUpdate().getPluginDateLastEdition()`: date of the last plugin update
+* update README and example
 
 ## 1.0.7
 
