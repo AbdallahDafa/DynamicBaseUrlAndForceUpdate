@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "include/dynamic_chnage_base_url_and_force_update/dynamic_chnage_base_url_and_force_update_plugin.h"
+#include "include/dynamic_base_url_and_force_update/dynamic_chnage_base_url_and_force_update_plugin.h"
 #include "dynamic_chnage_base_url_and_force_update_plugin_private.h"
 
 // This demonstrates a simple unit test of the C portion of this plugin's

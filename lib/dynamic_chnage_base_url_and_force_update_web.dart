@@ -7,9 +7,8 @@ import 'dynamic_base_url_and_force_update_web.dart';
 
 /// Backwards-compatible wrapper expected by older generated registrants.
 class DynamicChnageBaseUrlAndForceUpdateWeb {
-  // Forward the static registration call to the real implementation.
+  /// Forwards the registration to [DynamicBaseUrlAndForceUpdateWeb].
   static void registerWith(Registrar registrar) {
     DynamicBaseUrlAndForceUpdateWeb.registerWith(registrar);
   }
 }
-

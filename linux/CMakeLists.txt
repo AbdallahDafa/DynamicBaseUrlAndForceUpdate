@@ -9,7 +9,7 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 
 # This value is used when generating builds using this plugin, so it must
 # not be changed.
-set(PLUGIN_NAME "dynamic_chnage_base_url_and_force_update_plugin")
+set(PLUGIN_NAME "dynamic_base_url_and_force_update_plugin")
 
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
@@ -44,7 +44,7 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
-set(dynamic_chnage_base_url_and_force_update_bundled_libraries
+set(dynamic_base_url_and_force_update_bundled_libraries
   ""
   PARENT_SCOPE
 )

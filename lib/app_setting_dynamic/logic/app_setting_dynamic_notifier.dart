@@ -37,7 +37,7 @@ export 'package:dynamic_base_url_and_force_update/app_setting_dynamic/data/enum/
 /// 3- the download starts only from a screen, never from main():
 ///    - splash screen (optional, to start early), DON'T await it:
 ///      `context.read<AppSettingDynamicNotifier>().download();`
-///    - home page (required): `AppSettingForceUpdateChecker(child: ...)`,
+///    - home page (required): `AppSettingForceUpdateCheckerWidget(child: ...)`,
 ///      it downloads (or shares the splash download) and checks force update.
 ///
 /// 4- in code without BuildContext (dio helper, di, endpoints):
@@ -169,7 +169,7 @@ class AppSettingDynamicNotifier extends ChangeNotifier {
   /// cache / [domainDefault], and listeners are notified when it finishes.
   ///
   /// Called only from screens, never from main(): the splash screen may call
-  /// it to start early (don't await it), and `AppSettingForceUpdateChecker`
+  /// it to start early (don't await it), and `AppSettingForceUpdateCheckerWidget`
   /// always calls it in the home page.
   ///
   /// Downloads once: every call shares the same request.

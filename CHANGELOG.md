@@ -1,3 +1,16 @@
+## 1.0.9
+
+* license changed to MIT (an OSI-approved open-source license)
+* dependencies have version ranges instead of `any`: `web: ^1.0.0`, `dio: ^5.4.0`, `url_launcher: ^6.2.1`,
+  `provider: ^6.0.0`, `shared_preferences: ^2.0.0` (minimum Flutter 3.22, same as the Dart 3.4 minimum)
+* iOS & macOS: Swift Package Manager support (`Package.swift` in `ios/dynamic_base_url_and_force_update/`
+  and `macos/dynamic_base_url_and_force_update/`)
+* iOS & macOS: podspec renamed to `dynamic_base_url_and_force_update.podspec`, so CocoaPods finds the plugin
+* Linux & Windows: CMake target and `include/` folder renamed to `dynamic_base_url_and_force_update`, so apps build
+* fix `getPlatformVersion()`: the method channel name now matches the native code
+* fix analyzer warnings and lints (unused import, dead code), code formatted with `dart format`
+* `LocalLog` prints with `debugPrint`
+
 ## 1.0.8
 
 * refactor: `AppSettingDynamicInstaller` replaced by `AppSettingDynamicNotifier` (Provider `ChangeNotifier`)

@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 /// ```dart
 /// @override
 /// Widget build(BuildContext context) {
-///   return AppSettingForceUpdateChecker(
+///   return AppSettingForceUpdateCheckerWidget(
 ///     child: Scaffold(...),
 ///   );
 /// }

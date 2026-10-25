@@ -1,39 +1,39 @@
 name: dynamic_base_url_and_force_update
 description: "Dynamic Change Base Url & Feature Force Update New Version From Google Play and Apple Store"
-version: 1.0.8
+version: 1.0.9
 homepage: https://github.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate
 repository: https://github.com/AbdallahDafa/DynamicBaseUrlAndForceUpdate
 
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
-  flutter: '>=3.3.0'
+  flutter: '>=3.22.0'
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  web: any #^1.0.0 #^0.5.1
+  web: ^1.0.0
   plugin_platform_interface: ^2.0.2
 
 
   #network
-  dio: any #^5.7.0
+  dio: ^5.4.0
 
   # intent
-  url_launcher: any #6.2.6 #flutter 3.22.0
+  url_launcher: ^6.2.1
 
   # state management
-  provider: any #^6.1.2
+  provider: ^6.0.0
 
   # cache: last downloaded app setting saved on the device
-  shared_preferences: any #^2.3.0
+  shared_preferences: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

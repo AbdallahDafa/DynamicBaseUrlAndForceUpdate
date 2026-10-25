@@ -29,8 +29,7 @@ Set `dateLastUpdate` to the current local date and time on this computer, in the
 
 ```dart
 class DynamicPluginEnv {
-
-  static const  String dateLastUpdate = "2026-10-24 7:40 pm";
+  static const String dateLastUpdate = "2026-10-24 7:40 pm";
 }
 ```
 
@@ -74,7 +73,6 @@ Package has N warnings. Do you want to publish dynamic_base_url_and_force_update
 
 - **Answer `y`.** Warnings don't block publishing. Confirm anyway.
 - Warnings that are expected in this repo:
-  - dependencies without a version constraint (`web`, `dio`, `url_launcher`, `provider` and `shared_preferences` use `any`),
   - checked-in files modified in git (the files you just edited).
 - Don't make changes to silence warnings: no constraint edits, and no commit yet (that's step 5). Just confirm.
 - If your terminal can't answer the prompt, run `dart pub publish --force` instead. It skips the question and uploads when there are only warnings. It still refuses on errors.

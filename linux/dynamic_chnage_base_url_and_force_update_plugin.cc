@@ -1,4 +1,4 @@
-#include "include/dynamic_chnage_base_url_and_force_update/dynamic_chnage_base_url_and_force_update_plugin.h"
+#include "include/dynamic_base_url_and_force_update/dynamic_chnage_base_url_and_force_update_plugin.h"
 
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>

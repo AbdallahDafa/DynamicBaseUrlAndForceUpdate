@@ -253,8 +253,8 @@ Future<void> main() async {
   ///    also loads the last setting saved on the device (cache):
   ///    local read, no network, works offline
   await AppSettingDynamicNotifier.instance.setConfigBaseUrls(
-    domainDefault: 'https://test4.maqsafy.com',
-    firebaseBaseUrl: "https://maqsafy-egypt-default-rtdb.firebasedatabase.app",
+    domainDefault: 'https://mydomainexample.com',
+    firebaseBaseUrl: "https://project-id-firebase-example.firebasedatabase.app",
   );
 
   await di.init(); // dio helper reads AppSettingDynamicNotifier.instance.domain
@@ -436,7 +436,7 @@ Due to static fields are initialized only once when the class is first loaded in
     <td>
       <h3>Created by Flutter Developer <br/>Abdallah Mahmoud<br/>
       <a href="https://www.linkedin.com/in/abdallah-android-app/">Linkedin</a><br/>
-      at MASARAT company</h3>
+      </h3>
     </td>
   </tr>
  

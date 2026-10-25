@@ -1,4 +1,4 @@
-#include "include/dynamic_chnage_base_url_and_force_update/dynamic_chnage_base_url_and_force_update_plugin_c_api.h"
+#include "include/dynamic_base_url_and_force_update/dynamic_chnage_base_url_and_force_update_plugin_c_api.h"
 
 #include <flutter/plugin_registrar_windows.h>
 

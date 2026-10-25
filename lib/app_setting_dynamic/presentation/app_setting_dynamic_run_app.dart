@@ -3,6 +3,7 @@ import 'package:dynamic_base_url_and_force_update/app_setting_dynamic/logic/app_
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Called when the base url changes, to re-create your dio helper / "di".
 typedef OnNeedUpdateDioHelperBaseUrl = Function();
 
 /// Provides [AppSettingDynamicNotifier] and the force-update settings to the
@@ -10,7 +11,7 @@ typedef OnNeedUpdateDioHelperBaseUrl = Function();
 ///
 /// Nothing is downloaded here and nothing blocks the app start:
 /// the download starts only from screens: the splash screen (optional) and
-/// the home page with `AppSettingForceUpdateChecker` (required), which also
+/// the home page with `AppSettingForceUpdateCheckerWidget` (required), which also
 /// checks force update.
 class AppSettingDynamicRunApp extends StatefulWidget {
 

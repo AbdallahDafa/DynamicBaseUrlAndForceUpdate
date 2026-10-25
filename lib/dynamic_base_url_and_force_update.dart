@@ -23,10 +23,14 @@ export 'app_setting_dynamic/presentation/app_setting_dynamic_run_app.dart';
 export 'app_setting_dynamic/presentation/app_setting_force_update_checker_widget.dart';
 export 'app_setting_dynamic/presentation/app_setting_force_update_dialog.dart';
 
+/// Entry point of the plugin's platform API.
 class DynamicBaseUrlAndForceUpdate {
+  /// Name and version of the platform the app runs on,
+  /// example: "Android 14".
   Future<String?> getPlatformVersion() {
     return DynamicBaseUrlAndForceUpdatePlatform.instance.getPlatformVersion();
   }
 
-  String  getPluginDateLastEdition () => DynamicPluginEnv.dateLastUpdate;
+  /// Date of the last update of this plugin, example: "2026-10-24 7:40 pm".
+  String getPluginDateLastEdition() => DynamicPluginEnv.dateLastUpdate;
 }
