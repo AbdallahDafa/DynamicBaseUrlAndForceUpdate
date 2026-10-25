@@ -10,6 +10,10 @@ Instructions for AI coding agents working in this repository.
 
 When I ask to **"publish new version"** (or "publish a new version", "release new version"), do the five steps below in order. Only stop where a step says to.
 
+**Run everything automatically, without asking me to confirm.** Run every command in these steps yourself (`git log` / `git diff` / `git status`, `dart pub publish --force`, `git add`, `git commit`, `git push`). Don't ask me before running a command, and don't hand me commands to paste in a terminal. My request to publish is the confirmation.
+
+- If your terminal can't take typed input, write the commands into a script inside `build/` (ignored by git and by pub, so it's never committed or published) and run that script.
+
 ### 1. Bump the version in `pubspec.yaml`
 
 In the root `pubspec.yaml`, add 1 to the last number of the `version:` line:
@@ -59,23 +63,18 @@ Newest version on top, in the same style as the existing entries:
 - The heading must be exactly `## <new version>`. Pub warns when `CHANGELOG.md` doesn't mention the version being published.
 - Don't edit older entries, and don't leave an empty `## Unreleased` above the new heading. pub.dev shows this file as it is.
 
-### 4. Publish, and confirm even if pub reports warnings
+### 4. Publish with `--force`, no confirmation prompt
 
 ```bash
-dart pub publish
+dart pub publish --force
 ```
 
-Pub validates the package, lists what it found under "Package validation found the following potential issue(s)", then asks something like:
+`--force` skips pub's question (`Do you want to publish dynamic_base_url_and_force_update 1.0.8 to https://pub.dev (y/N)?`) and uploads right away when validation finds only warnings. It still refuses when there are errors.
 
-```text
-Package has N warnings. Do you want to publish dynamic_base_url_and_force_update 1.0.8 to https://pub.dev (y/N)?
-```
-
-- **Answer `y`.** Warnings don't block publishing. Confirm anyway.
-- Warnings that are expected in this repo:
+- Always add `--force`. Don't run plain `dart pub publish` and wait at the y/N prompt, and don't ask me to answer it.
+- Warnings don't block publishing. Warnings that are expected in this repo:
   - checked-in files modified in git (the files you just edited).
-- Don't make changes to silence warnings: no constraint edits, and no commit yet (that's step 5). Just confirm.
-- If your terminal can't answer the prompt, run `dart pub publish --force` instead. It skips the question and uploads when there are only warnings. It still refuses on errors.
+- Don't make changes to silence warnings: no constraint edits, and no commit yet (that's step 5).
 
 If it doesn't publish, don't go on to step 5:
 

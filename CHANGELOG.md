@@ -1,3 +1,9 @@
+## 1.0.10
+
+* license changed to BSD 3-Clause (`LICENSE` file and the new License section at the end of the README)
+* README screenshots updated: Firebase project name and app id hidden in the Firebase and Postman setup steps
+* removed unused screenshots (`applepay/`, `company/` logo & cover, `dev-teachlead.png`)
+
 ## 1.0.9
 
 * license changed to MIT (an OSI-approved open-source license)
